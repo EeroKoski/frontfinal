@@ -20,7 +20,6 @@ function AddCustomer(props) {
 
     })
 
-
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -116,11 +115,6 @@ function AddCustomer(props) {
       </Dialog>
     </div>
   );
-
-
-
-
-
 }
 
 export default AddCustomer;

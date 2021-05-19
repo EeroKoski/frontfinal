@@ -116,6 +116,7 @@ function Trainings() {
 
   return (
     <div className="App">
+      
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6">
@@ -123,8 +124,9 @@ function Trainings() {
           </Typography>
         </Toolbar>
       </AppBar>
+
       <AddTraining addTraining={addTraining} />
-       <div className="ag-theme-material" style={{ height: 600, width: '90%', margin: 'auto' }}>
+        <div className="ag-theme-material" style={{ height: 600, width: '90%', margin: 'auto' }}>
             <AgGridReact
                 columnDefs={columns}
                 rowData={trainings}
@@ -132,8 +134,6 @@ function Trainings() {
                 paginationPageSize={8}
                 suppressCellSelection={true}
                 />
-                
-            
         </div>
         <Snackbar 
         open={open}
@@ -144,5 +144,6 @@ function Trainings() {
     </div>
   );
 }
+
 
 export default Trainings;
