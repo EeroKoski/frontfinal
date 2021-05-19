@@ -7,21 +7,14 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
-import './App.css';
 import Snackbar from '@material-ui/core/Snackbar';
-import AddCustomer from './components/AddCustomer.js';
-import EditCustomer from './components/EditCustomer.js';
-import Trainings from './components/Trainings';
-import MenuIcon from '@material-ui/icons/Menu';
+import AddTraining from './AddTraining';
+import EditTraining from './EditTraining';
 
 
-
-
-function App() {
-  const [ customers, setCustomers ] = useState([]);
+function Trainings() {
+  const [ trainings, setTrainings ] = useState([]);
   const [ open, setOpen ] = useState(false);
-  const [ gridApi, setGridApi ] =useState(null);
-  const [gridColumnApi, setGridColumnApi] = useState(null);
 
   const openSnackbar = () => {
     setOpen(true);
@@ -32,28 +25,28 @@ function App() {
   }
 
   useEffect(() => {
-    fetchCustomers();
+    fetchTrainings();
 
   }, []);
 
   
   
-  const fetchCustomers = () => {
-    fetch('https://customerrest.herokuapp.com/api/customers')
+  const fetchTrainings = () => {
+    fetch ('https://customerrest.herokuapp.com/api/trainings')
     .then(response => response.json())
-    .then(data => setCustomers(data._embedded.customers))
+    .then(data => setTrainings(data._embedded.trainings))
     .catch(err => console.error(err))
   }
 
-  const addCustomer = (newCustomer) => {
-      fetch('https://customerrest.herokuapp.com/api/customers', {
+  const addTraining = (newTraining) => {
+      fetch('https://customerrest.herokuapp.com/api/trainings', {
       method: 'POST',
-      body: JSON.stringify(newCustomer),
+      body: JSON.stringify(newTraining),
       headers: { 'Content-type' : 'application/json' }
     })
     .then(response => {
       if (response.ok)
-      fetchCustomers()
+      fetchTrainings()
       else
       alert('something went sideways.');
     })
@@ -61,28 +54,28 @@ function App() {
     } 
 
     
-    const editCustomer = (url, updatedCustomer) => {
+    const editTraining = (url, updatedTraining) => {
       fetch(url, {
         method: 'PUT',
-        body: JSON.stringify(updatedCustomer),
+        body: JSON.stringify(updatedTraining),
       headers: { 'Content-type' : 'application/json' }
       })
       .then(response => {
         if (response.ok)
-        fetchCustomers();
+        fetchTrainings();
         else
         alert('Something went bad')
       })
       .catch(err => console.error(err))
     }
 
-    const deleteCustomer = (url) => {
+    const deleteTraining = (url) => {
       if (window.confirm('Are you sure?')) {
       fetch(url, { method: 'DELETE'})
       .then(response => {
         if (response.ok) {
           openSnackbar();
-          fetchCustomers();
+          fetchTrainings();
         }
         else
           alert("Something went wrong!");
@@ -93,20 +86,18 @@ function App() {
 
 
   const columns = [
-    {field: 'firstname', sortable: true, filter: true, width: 200},
-    {field: 'lastname', sortable: true, filter: true, width: 200},
-    {field: 'streetaddress', sortable: true, filter: true, width: 200},
-    {field: 'postcode', sortable: true, filter: true, width: 150},
-    {field: 'city', sortable: true, filter: true, width: 100},
-    {field: 'email', sortable: true, filter: true, width: 200},
-    {field: 'phone', sortable: true, filter: true, width: 200},
+    {field: 'date', sortable: true, filter: true},
+    {field: 'duration', sortable: true, filter: true},
+    {field: 'activity', sortable: true, filter: true},
+    {field: 'customer', sortable: true, filter: true},
+    
 
     {
       headerName: '',
       field: '_links.self.href',
       width: 100,
       cellRendererFramework: params => 
-        <EditCustomer link={params.value} customer={params.data} editCustomer={editCustomer} />
+        <EditTraining link={params.value} training={params.data} editTraining={editTraining} />
 
 
     },
@@ -115,53 +106,28 @@ function App() {
       field: '_links.self.href',
       width: 100,
       cellRendererFramework: params => 
-      <IconButton color='secondary' onClick={() => deleteCustomer(params.value)}>
+      <IconButton color='secondary' onClick={() => deleteTraining(params.value)}>
         <DeleteIcon/>
       </IconButton>
     }
-
-   
-  
+    
 
   ]
-  const onFilterTextChange = (e) => {
-    gridApi.setQuickFilter(e.target.value)
- }
-
- const searchDivStyle={backgroundColor:"#00628080", padding:10}
- const searchStyle={width: "75%", padding: "10px 20px", borderRadius:20, outline:0}
- function onGridReady(params) {
-  setGridApi(params.api);
-  setGridColumnApi(params.columnApi);
-}
-
-
 
   return (
     <div className="App">
-     
-  
-
-
       <AppBar position="static">
         <Toolbar>
-        
-             
           <Typography variant="h6">
             Trainings and things
           </Typography>
-          
         </Toolbar>
       </AppBar>
-      <AddCustomer addCustomer={addCustomer} />
-      <div style={searchDivStyle}>
-      <input type="search" style={searchStyle} onChange={onFilterTextChange} placeholder="Search"/>
-      </div>
-       <div className="ag-theme-material" style={{ height: 500, width: '95%', margin: 'auto' }}>
+      <AddTraining addTraining={addTraining} />
+       <div className="ag-theme-material" style={{ height: 600, width: '90%', margin: 'auto' }}>
             <AgGridReact
-                onGridReady={onGridReady}
                 columnDefs={columns}
-                rowData={customers}
+                rowData={trainings}
                 pagination={true}
                 paginationPageSize={8}
                 suppressCellSelection={true}
@@ -171,17 +137,12 @@ function App() {
         </div>
         <Snackbar 
         open={open}
-        message ="Customer deleted"
+        message ="Training deleted"
         autoHideDuration={3000}
         onClose={closeSnackbar}
         />
-
-        
     </div>
-    
-    
   );
-  
 }
 
-export default App;
+export default Trainings;
